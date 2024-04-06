@@ -1,20 +1,22 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
-	"fmt"
+	. "gosh/config"
+	. "gosh/runner"
 	"os"
 )
 
+var mainRunner Runner
+
+func init() {
+	// Initialize the global configuration
+	InitConfig()
+	mainRunner = NewRunner()
+}
+
 func main() {
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		fmt.Print("$ ")
-		text, _, _ := reader.ReadLine()
-		if bytes.Equal(text, []byte("exit")) {
-			os.Exit(0)
-		}
-		fmt.Printf("%s\n", text)
+	err := mainRunner.RunInteractive(os.Stdin, os.Stderr, os.Stdout, DefaultHandler)
+	if err != nil {
+		panic(err)
 	}
 }
